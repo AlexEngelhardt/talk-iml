@@ -1,5 +1,3 @@
-TODO grep for "TODO" :)
-
 # Interpretable Machine Learning / Explainable Artificial Intelligence
 
 Automatization is a good thing in general. It finishes easy, repetitive tasks, and enables humans to use their time and brain power for newer, more challenging problems. And since machine learning (ML) models automatize decisions, they are a good thing in general, as well.
@@ -108,7 +106,7 @@ Let's dive in and look at the following three methods that allow us to understan
 - Partial dependence plots (PDPs) are a *global* method that explains the *effect* of each feature.
 - Shapley values are a *local* method that explains the *effect* of each feature, but for a *single* prediction.
 
-### Permutation Feature Importance
+## Permutation Feature Importance
 
 In a linear model, the *importance* of a single feature can be measured by the standardized regression coefficient (or the associated p-value). The permutation feature importance (PFI) is a generalized, model-agnostic version of this value.
 
@@ -136,7 +134,7 @@ The second most important feature is the temperature on that day, and the third 
 
 By looking at the PFI of each feature, we have a solution for the first of the three problems mentioned in the beginning of this article, the fairness of an algorithm. Now, we see how much each feature contributes to the predictions, and by this, we can make sure that features such as a person's gender have no big influence on the prediction.
 
-### Partial Dependence Plots
+## Partial Dependence Plots
 
 In a linear model, the *effect* of a single feature can be measured by the feature's regression coefficient. The partial dependence plot (PDP) is a generalized, model-agnostic version of this value.
 
@@ -178,15 +176,69 @@ By the way, you could compute PDPs for a linear model as well. And if you do the
 
 If you recall the second story in our introduction above, you'll find that PDPs are one possible solution this problem. They visualize each feature's *effect* on the model's prediction, and thus give us *knowledge* about the model's behavior, and ideally also about the situation in the real world.
 
-### Shapley Values / SHAP
+## Shapley Values / SHAP
 
+Shapley values, and in particular the new derivative method [SHAP](http://papers.nips.cc/paper/7062-a-unified-approach-to-interpreting-model-predictions), is a very promising method. You can use Shapley values to describe each feature's importance for one particular prediction, and by aggregating over data instances, you can get other interesting measures such as global feature importances. SHAP could very well be the one-size-fits-most method in IML.
 
+Intuitively, the question that Shapley values answer is: "How to fairly distribute the prediction among the features?" How much does each feature contribute? For example, when interpreting a predicted apartment sale price of 320'000€. Its features included a size of 64 sq.m., the 5th floor, the apartment does not allow pets, and it has a balcony. Now, how did each feature influence the prediction? For example, the average prediction over all training data was 300'000€. Then one possible Shapley-based interpretation might be: The above-average size of 64 sq.m. contributed an additional 15'000€ to the predicted price, the balcony contributed 7'000€, and the no-cats-allowed policy contributed -2'000€, i.e. it reduced the predicted price by 2'000€.
+
+For linear models, each feature's contribution is easily determined: $\beta_j \cdot x_j$. Shapley values can be seen as a generalization of this contribution.
+
+Shapley values have an exciting theoretical fundament in game theory. Predicting is a *game*, where players collaborate and distribute a certain *gain* amongst them:
+
+- The *game* is the prediction task for one single instance
+- The *gain* is the difference between the actual prediction and the global average prediction.
+- The *players* are the feature values that collaborate to receive the gain (= predict a certain value)
+- Features act as a coalition
+
+Each feature's Shapley value now assigns a *payout* to each feature, depending on their contribution to the total gain.
+
+The computation is a bit complex and I'll skip it here - if you're interested in the technical details, I can refer you to the [original paper](http://papers.nips.cc/paper/7062-a-unified-approach-to-interpreting-model-predictions) or the SHAP chapter in [Christoph Molnar's book](https://christophm.github.io/interpretable-ml-book/shap.html).
+
+### Visualizing Shapley Values
+
+The Python package [shap](https://pypi.org/project/shap/) implements a very pretty way of visualizing Shapley values: You plot them as *forces* that push the prediction away from the *base value* (i.e. the average prediction over the entire data set). Since Shapley values are *additive* importance measures, you can weigh positive and negative values up against each other, to see which ones cancel out, and which ones push the prediction the farthest away from the base value.
+
+Imagine you work at the bike rental company, and your boss storms in to ask why we only rented out so few bikes yesterday. "It was a perfect 15.4°C, why didn't they use our bikes?"
+
+<img src="blogpostimg/SHAP1.png" style="height: 125px" />
+
+You'd show him this image and can argue: "Yes, the temperature was nice, but that effect was compensated again by the high humidity of 91.7%. And then, the "light rain" pushed the numbers down even further".
+
+In this example, the calendar year of 2011 also had a strong negative effect (because the bike service grew a lot from 2011 to 2012, they rented out fewer bikes in 2011 and more in 2012).
+
+### Shapley-based feature importance
+
+One very nice property of Shapley values is that you can aggregate them and plot them in different ways, so additionally to the *local* explanations we plotted above, you can aggregate them to a *global* explanation for your entire model.
+
+A measure for *feature importance* is easily computed: We average the *absolute* Shapley values for each feature. The resulting plots then look very much like the permutation feature importance discussed earlier, and they can be used as an alternative.
+
+<img src="blogpostimg/SHAP2.png" style="height: 400px" />
+
+But: There is a big difference between these importance measures: Permutation feature importance is based on the decrease in model performance, while SHAP is based on the magnitude of feature attributions. As always, the best method for you depends on what is most fitting or interesting for you to measure and plot.
+
+### SHAP dependence plot
+
+The SHAP dependence plot is a simple visualization of Shapley values, and give you a quick global overview over the effects of one feature. They are very easily plotted:
+
+1. Pick a feature.
+2. For each data instance, plot a point with the feature value on the x-axis and the corresponding Shapley value on the y-axis.
+
+<img src="blogpostimg/SHAP3.png" style="height: 200px" />
+
+These plots are an alternative to Partial Dependence Plots discussed earlier. However, while PDPs show average effects, the SHAP dependence also shows the variance on the y-axis. Especially in case of interactions, the SHAP dependence plot will be much more dispersed in the y-axis. 
+
+### Shapley Values: Conclusion
+
+Remember the third story in the introduction: A person applied for a loan and got declined. If he demands an explanation on why he was declined, you can now compute and show the Shapley values for his particular prediction. Maybe they'll show that his income was okay, but due to a defaulted loan 15 years ago, his credit score was pushed very far down.
 
 ## Other Methods not covered here
 
 [Christoph Molnars book](https://christophm.github.io/interpretable-ml-book/) introduces many other methods that I have left out in this post. The chapter I found most interesting was the one about *Adversarial Examples*.
 
-TODO lightning talk pasten.
+Just like you can phrase a definition of something by stating what it is *not*, you can interpret a ML model by examining *where it fails*. For example, you have an image classification model (dog, cat, mouse, ...), and you want to find images that a human would (correctly) classify as "cat", but the model is very sure it's a dog.
+
+There are algorithms to create such images, and they have a dark side: You can use them to *attack* a deployed ML model. For example, imagine you had a sticker that you can stick on your dog, and the model gets confused and classifies the dog as a toaster. Well, [this sticker exists](https://arxiv.org/pdf/1712.09665.pdf). And now imagine you stick this sticker on stop signs, and self-driving cars don't recognize them anymore. This poses dangers to models deployed in the real world, and there might be an eternal arms race between attackers and defenders coming up - much like it has always been in "traditional" cybersecurity.
 
 ## The Future of Interpretable Machine Learning
 
@@ -195,7 +247,7 @@ Under the premise that (a) machine learning automatizes decision making and (b) 
 Interpretable Machine Learning will play a crucial part in this development for a number of reasons:
 
 - The hesitant and distrustful will require much more transparency and explainability of a model's behavior in order to adopt ML technology in their business.
-- We are never able to *perfectly* specify what we want to our computer. He'll just stupidly do what we tell him to do (TODO Molnar pg. 296). As is often the case when a government introduces new legal constraints, those affected by the constraints might find an unexpected solution the lawmakers didn't have in mind. Similar things can happen with ML models, and interpretability methods help us in discovering and resolving these situations.
+- We are never able to *perfectly* specify what we want to our computer. He'll just stupidly do what we tell him to do. Think of a genie in a bottle that takes your wishes *literally*: "I want to be happy for the rest of my life!", and the genie gives you a hit of heroin, then kills you. As is often the case when a government introduces new legal constraints, those affected by the constraints might find an unexpected solution the lawmakers didn't intend. Similar things can happen with ML models, and interpretability methods help us in discovering and resolving these situations.
 - A deployed black-box model can be vulnerable to [adversarial examples](https://arxiv.org/abs/1712.03141): If an attacker knows how to fool a model, he can influence the decision to his liking. Adversarial Machine Learning is becoming a new field in cybersecurity, where attackers and defenders are in a perpetual arms race.
 
 As has happened with machine learning itself, interpretable machine learning methods will most likely be automatized in the future. Like a test suite that runs after every change in a code repository, every retrained model gets an automatic report of things like feature importance, feature effects, etc.
