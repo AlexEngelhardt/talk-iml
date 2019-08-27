@@ -1,3 +1,5 @@
+TODO grep for "TODO" :)
+
 # Interpretable Machine Learning / Explainable Artificial Intelligence
 
 Automatization is a good thing in general. It finishes easy, repetitive tasks, and enables humans to use their time and brain power for newer, more challenging problems. And since machine learning (ML) models automatize decisions, they are a good thing in general, as well.
@@ -176,11 +178,26 @@ By the way, you could compute PDPs for a linear model as well. And if you do the
 
 If you recall the second story in our introduction above, you'll find that PDPs are one possible solution this problem. They visualize each feature's *effect* on the model's prediction, and thus give us *knowledge* about the model's behavior, and ideally also about the situation in the real world.
 
-### SHAP / Shapley Values
+### Shapley Values / SHAP
 
 
 
 ## Other Methods not covered here
 
+[Christoph Molnars book](https://christophm.github.io/interpretable-ml-book/) introduces many other methods that I have left out in this post. The chapter I found most interesting was the one about *Adversarial Examples*.
+
+TODO lightning talk pasten.
+
 ## The Future of Interpretable Machine Learning
 
+Under the premise that (a) machine learning automatizes decision making and (b) we like to automatize everything we can so that we can focus on new, more challenging problems, I predict that over the next years we will encounter many more ML models in the wild.
+
+Interpretable Machine Learning will play a crucial part in this development for a number of reasons:
+
+- The hesitant and distrustful will require much more transparency and explainability of a model's behavior in order to adopt ML technology in their business.
+- We are never able to *perfectly* specify what we want to our computer. He'll just stupidly do what we tell him to do (TODO Molnar pg. 296). As is often the case when a government introduces new legal constraints, those affected by the constraints might find an unexpected solution the lawmakers didn't have in mind. Similar things can happen with ML models, and interpretability methods help us in discovering and resolving these situations.
+- A deployed black-box model can be vulnerable to [adversarial examples](https://arxiv.org/abs/1712.03141): If an attacker knows how to fool a model, he can influence the decision to his liking. Adversarial Machine Learning is becoming a new field in cybersecurity, where attackers and defenders are in a perpetual arms race.
+
+As has happened with machine learning itself, interpretable machine learning methods will most likely be automatized in the future. Like a test suite that runs after every change in a code repository, every retrained model gets an automatic report of things like feature importance, feature effects, etc.
+
+But I don't see a need to be alarmed: Data scientists won't die out anytime soon. A similar thing has happened in web development: Today, anyone can build a website without knowing HTML, CSS, or JavaScript, yet we still need frontend developers. And analogously, tomorrow, anyone will be able to train a machine learning model, yet we will still need machine learning experts.
