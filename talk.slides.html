@@ -14014,7 +14014,7 @@ RF: 175.78575923392611
 <li>Shuffle the column of interest</li>
 <li>Predict with true data</li>
 <li>Predict with shuffled data<ul>
-<li>/<em> No retraining of the model necessary! </em>/</li>
+<li>// No retraining of the model necessary!</li>
 </ul>
 </li>
 <li>Take difference between losses</li>
@@ -14558,7 +14558,7 @@ dtype: float64</pre>
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="3---Shapley-Values-/-SHAP">3 - Shapley Values / SHAP<a class="anchor-link" href="#3---Shapley-Values-/-SHAP">&#182;</a></h1><ul>
-<li>How much does each feature contribute?</li>
+<li>How much does each feature contribute to a <em>single prediction</em>?</li>
 <li>"How to fairly distribute the prediction among the features?" </li>
 <li>For linear models, each feature's contribution is easy: $\beta_j \cdot x_j$</li>
 <li>Example: <ul>
@@ -14574,7 +14574,7 @@ dtype: float64</pre>
 <li>Average prediction is 300'000€.</li>
 <li>64sq.m. $\Rightarrow$ + 15'000€</li>
 <li>balcony $\Rightarrow$ + 7'000€</li>
-<li>no-cats-allowed $\Rightarrow$ - 2'000€.</li>
+<li>no-pets-allowed $\Rightarrow$ - 2'000€.</li>
 </ul>
 </li>
 </ul>
@@ -14592,7 +14592,6 @@ dtype: float64</pre>
 <li>The "game" is the prediction task for one single instance</li>
 <li>The "gain" is the actual prediction minus the average prediction of all instances.</li>
 <li>The "players" are the feature values that collaborate to receive the gain (= predict a certain value)</li>
-<li>Features act as a coalition</li>
 <li>Shapley value: assign payouts to players depending on their contribution to the total payout</li>
 </ul>
 </li>
