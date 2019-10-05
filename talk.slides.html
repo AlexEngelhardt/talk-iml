@@ -13370,6 +13370,7 @@ a.anchor-link {
 <li>Interpretable models can be better audited and debugged, and better feature engineering is possible</li>
 </ul>
 <p><img src="img/husky-vs-wolf-LIME-paper.png" style="height: 200px" /></p>
+<p>Ribeiro, Marco Tulio, Sameer Singh, and Carlos Guestrin. "Why should i trust you?: Explaining the predictions of any classifier." ACM, 2016.</p>
 
 </div>
 </div>
@@ -14526,6 +14527,25 @@ dtype: float64</pre>
 <li>How much does each feature contribute to a <em>single prediction</em>?</li>
 <li>"How to fairly distribute the prediction among the features?" </li>
 <li>For linear models, each feature's contribution is easy: $\beta_j \cdot x_j$</li>
+<li>Shapley values are based on game theory:<ul>
+<li>The "game" is the prediction task for one single instance</li>
+<li>The "gain" is the actual prediction minus the average prediction of all instances.</li>
+<li>The "players" are the feature values that collaborate to receive the gain (= predict a certain value)</li>
+<li>Shapley value: assign payouts to players depending on their contribution to the total payout</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://christophm.github.io/interpretable-ml-book/shap.html">https://christophm.github.io/interpretable-ml-book/shap.html</a><br>
+<a href="https://github.com/slundberg/shap">https://github.com/slundberg/shap</a></p>
+
+</div>
+</div>
+</div><aside class="notes">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ul>
 <li>Example: <ul>
 <li>Predict the sale price of an apartment<ul>
 <li>64 sq.m.</li>
@@ -14548,25 +14568,8 @@ dtype: float64</pre>
 
 </div>
 </div>
-</div></section></section><section><section>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="3---Shapley-Values-/-SHAP">3 - Shapley Values / SHAP<a class="anchor-link" href="#3---Shapley-Values-/-SHAP">&#182;</a></h1><ul>
-<li>Based on game theory:<ul>
-<li>The "game" is the prediction task for one single instance</li>
-<li>The "gain" is the actual prediction minus the average prediction of all instances.</li>
-<li>The "players" are the feature values that collaborate to receive the gain (= predict a certain value)</li>
-<li>Shapley value: assign payouts to players depending on their contribution to the total payout</li>
-</ul>
-</li>
-</ul>
-<p><a href="https://christophm.github.io/interpretable-ml-book/shap.html">https://christophm.github.io/interpretable-ml-book/shap.html</a><br>
-<a href="https://github.com/slundberg/shap">https://github.com/slundberg/shap</a></p>
-
 </div>
-</div>
-</div><aside class="notes">
+</aside><aside class="notes">
 
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
