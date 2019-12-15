@@ -11,3 +11,7 @@ PyConDE 2019 talk about interpretable machine learning
 
 - Christoph Molnar's talks on the same topic:
   - https://github.com/christophM/iml-talk
+
+### Given
+
+- 2019-10-11 at PyConDE Berlin, as a 30 minute talk
