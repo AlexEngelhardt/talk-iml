@@ -1,6 +1,8 @@
 # iml-talk
 PyConDE 2019 talk about interpretable machine learning
 
+Talk recorded on Youtube: https://www.youtube.com/watch?v=sAqSGY-HkVY
+
 - I will update slides and material in this repository.
 - There is also a blog post on this topic available:
   - https://alpha-epsilon.de/datascience/2019/08/27/interpretable-machine-learning/
