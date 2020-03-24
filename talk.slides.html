@@ -14391,6 +14391,238 @@ dtype: float64</pre>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Why-are-Partial-Dependences-so-different-from-the-group-means?">Why are Partial Dependences so different from the group means?<a class="anchor-link" href="#Why-are-Partial-Dependences-so-different-from-the-group-means?">&#182;</a></h1><ul>
+<li>Here, we use <em>every</em> instance for every category</li>
+<li>Feature interactions are marginalized out:<ul>
+<li>Group means of <code>winter</code> contain only observations with -10°C</li>
+<li>Manipulated data contains observations with +30°C and manipulated season <code>winter</code></li>
+<li>$\Rightarrow$ The <em>pure</em> effect of season is not so high</li>
+</ul>
+</li>
+</ul>
+<p>This becomes clear once we compute ICEs, i.e. a PDP for <em>one</em> observation:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Compute group-by-season means of the predictions</span>
+
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;yhat&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rf_mod</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;season&#39;</span><span class="p">)[</span><span class="s1">&#39;yhat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+<span class="n">data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;yhat&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>season
+autumn    5638.569681
+spring    2642.722099
+summer    5013.737283
+winter    4717.895787
+Name: yhat, dtype: float64
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">i</span> <span class="o">=</span> <span class="mi">234</span>
+<span class="n">one_obs</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">:(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="p">:]</span>  <span class="c1"># weird syntax keeps it a DF instead of a Series</span>
+
+<span class="n">one_obs</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[20]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>year</th>
+      <th>temp</th>
+      <th>feel_temp</th>
+      <th>humidity</th>
+      <th>windspeed</th>
+      <th>season_autumn</th>
+      <th>season_spring</th>
+      <th>season_summer</th>
+      <th>season_winter</th>
+      <th>holiday_no</th>
+      <th>...</th>
+      <th>weekday_saturday</th>
+      <th>weekday_sunday</th>
+      <th>weekday_thursday</th>
+      <th>weekday_tuesday</th>
+      <th>weekday_wednesday</th>
+      <th>workingday_no</th>
+      <th>workingday_yes</th>
+      <th>weather_clear</th>
+      <th>weather_light rain</th>
+      <th>weather_mist</th>
+    </tr>
+    <tr>
+      <th>days_since_start</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>234</th>
+      <td>2011</td>
+      <td>17.0</td>
+      <td>14.3</td>
+      <td>45.5</td>
+      <td>9.8</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>1 rows × 23 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div></section></section><section><section>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">seasons</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;season_spring&#39;</span><span class="p">,</span> <span class="s1">&#39;season_summer&#39;</span><span class="p">,</span> <span class="s1">&#39;season_autumn&#39;</span><span class="p">,</span> <span class="s1">&#39;season_winter&#39;</span><span class="p">]</span>
+<span class="n">PDs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">seasons</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">season</span> <span class="ow">in</span> <span class="n">seasons</span><span class="p">:</span>
+    <span class="n">one_obs_temp</span> <span class="o">=</span> <span class="n">one_obs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">S</span> <span class="ow">in</span> <span class="n">seasons</span><span class="p">:</span>
+        <span class="n">one_obs_temp</span><span class="p">[</span><span class="n">S</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">one_obs_temp</span><span class="p">[</span><span class="n">season</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">PDs</span><span class="p">[</span><span class="n">season</span><span class="p">]</span> <span class="o">=</span> <span class="n">rf_mod</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">one_obs_temp</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="c1"># PD on &#39;season&#39;, *given* everything else (e.g. temperature) stays the same:</span>
+<span class="n">PDs</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[21]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>season_spring    4777.81
+season_summer    5574.36
+season_autumn    5641.54
+season_winter    5612.98
+dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div></section></section><section><section>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="PDPs-of-a-linear-model">PDPs of a linear model<a class="anchor-link" href="#PDPs-of-a-linear-model">&#182;</a></h1>
 </div>
 </div>
@@ -15171,238 +15403,6 @@ was nullified again by the high humidity"</p>
 
 </div>
 </div>
-</div></section></section><section><section>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Bonus-slides">Bonus slides<a class="anchor-link" href="#Bonus-slides">&#182;</a></h1><h3 id="Why-are-Partial-Dependences-so-different-from-the-group-means?">Why are Partial Dependences so different from the group means?<a class="anchor-link" href="#Why-are-Partial-Dependences-so-different-from-the-group-means?">&#182;</a></h3><ul>
-<li>Here, we use <em>every</em> instance for every category</li>
-<li>Feature interactions are marginalized out:<ul>
-<li>Group means of <code>winter</code> contain only observations with -10°C</li>
-<li>Manipulated data contains observations with +30°C and manipulated season <code>winter</code></li>
-<li>$\Rightarrow$ The <em>pure</em> effect of season is not so high</li>
-</ul>
-</li>
-</ul>
-<p>This becomes clear once we compute ICEs, i.e. a PDP for <em>one</em> observation:</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Compute group-by-season means of the predictions</span>
-
-<span class="n">data</span><span class="p">[</span><span class="s1">&#39;yhat&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rf_mod</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;season&#39;</span><span class="p">)[</span><span class="s1">&#39;yhat&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
-<span class="n">data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s1">&#39;yhat&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>season
-autumn    5638.569681
-spring    2642.722099
-summer    5013.737283
-winter    4717.895787
-Name: yhat, dtype: float64
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">i</span> <span class="o">=</span> <span class="mi">234</span>
-<span class="n">one_obs</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">:(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="p">:]</span>  <span class="c1"># weird syntax keeps it a DF instead of a Series</span>
-
-<span class="n">one_obs</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[20]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>year</th>
-      <th>temp</th>
-      <th>feel_temp</th>
-      <th>humidity</th>
-      <th>windspeed</th>
-      <th>season_autumn</th>
-      <th>season_spring</th>
-      <th>season_summer</th>
-      <th>season_winter</th>
-      <th>holiday_no</th>
-      <th>...</th>
-      <th>weekday_saturday</th>
-      <th>weekday_sunday</th>
-      <th>weekday_thursday</th>
-      <th>weekday_tuesday</th>
-      <th>weekday_wednesday</th>
-      <th>workingday_no</th>
-      <th>workingday_yes</th>
-      <th>weather_clear</th>
-      <th>weather_light rain</th>
-      <th>weather_mist</th>
-    </tr>
-    <tr>
-      <th>days_since_start</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>234</th>
-      <td>2011</td>
-      <td>17.0</td>
-      <td>14.3</td>
-      <td>45.5</td>
-      <td>9.8</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>1</td>
-      <td>...</td>
-      <td>0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-      <td>1</td>
-      <td>1</td>
-      <td>0</td>
-      <td>0</td>
-    </tr>
-  </tbody>
-</table>
-<p>1 rows × 23 columns</p>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div></section></section><section><section>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">seasons</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;season_spring&#39;</span><span class="p">,</span> <span class="s1">&#39;season_summer&#39;</span><span class="p">,</span> <span class="s1">&#39;season_autumn&#39;</span><span class="p">,</span> <span class="s1">&#39;season_winter&#39;</span><span class="p">]</span>
-<span class="n">PDs</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">seasons</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">season</span> <span class="ow">in</span> <span class="n">seasons</span><span class="p">:</span>
-    <span class="n">one_obs_temp</span> <span class="o">=</span> <span class="n">one_obs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">S</span> <span class="ow">in</span> <span class="n">seasons</span><span class="p">:</span>
-        <span class="n">one_obs_temp</span><span class="p">[</span><span class="n">S</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">one_obs_temp</span><span class="p">[</span><span class="n">season</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">PDs</span><span class="p">[</span><span class="n">season</span><span class="p">]</span> <span class="o">=</span> <span class="n">rf_mod</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">one_obs_temp</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-
-<span class="c1"># PD on &#39;season&#39;, *given* everything else (e.g. temperature) stays the same:</span>
-<span class="n">PDs</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[21]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>season_spring    4777.81
-season_summer    5574.36
-season_autumn    5641.54
-season_winter    5612.98
-dtype: float64</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
 </div></section></section>
 </div>
 </div>
